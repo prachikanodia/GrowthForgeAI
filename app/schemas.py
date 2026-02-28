@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import List, Literal, Optional
 
 
@@ -13,6 +13,21 @@ class DecisionRequest(BaseModel):
     urgency: Literal["low","medium","high"] = Field(description="Urgency level of the user query.")
     risk_tolerance: Literal["low", "medium", "high"] = Field(description="How much risk user is okay to accept.")
     success_metrics: List[str] = Field(description="Options to be prioritised first.")
+
+    @field_validator("success_metrics")
+    @classmethod
+    def validate_success_metrics(cls, value):
+        if not value:
+            raise ValueError("At least one success metric must be provided")
+        return value
+    
+    @model_validator(mode="after")
+    def validate_high_urgency_context(self):
+        if self.urgency == "high" and len(self.context) < 20:
+            raise ValueError(
+                "For high urgency decisions, context must be more detailed"
+            )
+        return self
 
 class RiskItem(BaseModel):
     risk: str = Field(description="A specific risk associated with this option.")
