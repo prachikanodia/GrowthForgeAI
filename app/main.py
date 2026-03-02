@@ -8,7 +8,7 @@ app = FastAPI(title="Make your decisions like a consultant")
 
 
 @app.post("/simulate", response_model=DecisionResponse)
-def simulate(req: DecisionRequest):
+async def simulate(req: DecisionRequest):
     try:
         return run_level2(req)
     except json.JSONDecodeError:
