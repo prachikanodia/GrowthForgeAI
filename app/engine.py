@@ -25,7 +25,7 @@ def run_level2(req: DecisionRequest):
 
     retriever = WikipediaRetriever(top_k_results=2, lang="en")
 
-    frameworks = choose_frameworks(req)  
+    frameworks = choose_frameworks(req)
 
     blocks = []
     for fw in frameworks:
